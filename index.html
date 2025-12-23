@@ -7,7 +7,24 @@
     <title>Grand Luxury Christmas Tree</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Monsieur+La+Doulaise&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script>
+      (function(){
+        var remoteHref = "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Monsieur+La+Doulaise&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap";
+        var localHref = "/fonts/fonts.css";
+        var timeout = 3000;
+        var loaded = false;
+        function loadLocal(){ if(loaded) return; loaded=true; var l=document.createElement('link'); l.rel='stylesheet'; l.href=localHref; document.head.appendChild(l); }
+        var remoteLink = document.createElement('link');
+        remoteLink.rel = 'stylesheet';
+        remoteLink.href = remoteHref;
+        remoteLink.onload = function(){ loaded = true; };
+        remoteLink.onerror = function(){ loadLocal(); };
+        document.head.appendChild(remoteLink);
+        setTimeout(function(){ if(!loaded) loadLocal(); }, timeout);
+      })();
+    </script>
     <style>
       body { 
         margin: 0; 

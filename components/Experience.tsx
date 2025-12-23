@@ -71,15 +71,75 @@ const SceneController: React.FC<{
             }
         };
 
+      // Mobile touch handling: single-finger drag rotates, two-finger pinch zooms
+      const touchPinchStartDist = { value: null as number | null };
+      const pinchStartZoom = { value: zoomTarget.current };
+
+      const getTouchDistance = (a: Touch, b: Touch) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+
+      const onTouchStart = (e: TouchEvent) => {
+        if (!canvas) return;
+        if (e.touches.length === 1) {
+          // single-finger: start drag
+          isDragging.current = true;
+          lastPointerX.current = e.touches[0].clientX;
+          rotationVelocity.current = 0;
+        } else if (e.touches.length === 2) {
+          // pinch start
+          touchPinchStartDist.value = getTouchDistance(e.touches[0], e.touches[1]);
+          pinchStartZoom.value = zoomTarget.current;
+          isDragging.current = false;
+        }
+      };
+
+      const onTouchMove = (e: TouchEvent) => {
+        if (!canvas) return;
+        if (e.touches.length === 1 && isDragging.current && groupRef.current) {
+          e.preventDefault();
+          const t = e.touches[0];
+          const deltaX = t.clientX - lastPointerX.current;
+          lastPointerX.current = t.clientX;
+          const rotationAmount = deltaX * 0.005;
+          groupRef.current.rotation.y += rotationAmount;
+          rotationVelocity.current = rotationAmount;
+        } else if (e.touches.length === 2 && touchPinchStartDist.value != null) {
+          e.preventDefault();
+          const dist = getTouchDistance(e.touches[0], e.touches[1]);
+          // When fingers move apart (dist increases) we zoom in (decrease zoomTarget)
+          const change = (touchPinchStartDist.value - dist) * 0.02;
+          zoomTarget.current = THREE.MathUtils.clamp(pinchStartZoom.value + change, 15, 60);
+        }
+      };
+
+      const onTouchEnd = (e: TouchEvent) => {
+        if (e.touches.length === 0) {
+          isDragging.current = false;
+          touchPinchStartDist.value = null;
+        } else if (e.touches.length === 1) {
+          // resume single-finger drag with remaining touch
+          isDragging.current = true;
+          lastPointerX.current = e.touches[0].clientX;
+        }
+      };
+
         canvas.addEventListener('wheel', onWheel, { passive: false });
         canvas.addEventListener('pointerdown', onPointerDown);
         canvas.addEventListener('pointerup', onPointerUp);
         canvas.addEventListener('pointermove', onPointerMove);
+        // Touch listeners for mobile gestures
+        canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+        canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+        canvas.addEventListener('touchend', onTouchEnd);
+        canvas.addEventListener('touchcancel', onTouchEnd);
         return () => {
-            canvas.removeEventListener('wheel', onWheel);
-            canvas.removeEventListener('pointerdown', onPointerDown);
-            canvas.removeEventListener('pointerup', onPointerUp);
-            canvas.removeEventListener('pointermove', onPointerMove);
+          canvas.removeEventListener('wheel', onWheel);
+          canvas.removeEventListener('pointerdown', onPointerDown);
+          canvas.removeEventListener('pointerup', onPointerUp);
+          canvas.removeEventListener('pointermove', onPointerMove);
+          canvas.removeEventListener('touchstart', onTouchStart);
+          canvas.removeEventListener('touchmove', onTouchMove);
+          canvas.removeEventListener('touchend', onTouchEnd);
+          canvas.removeEventListener('touchcancel', onTouchEnd);
         };
     }, [gl, groupRef]);
 
