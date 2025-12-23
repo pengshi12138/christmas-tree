@@ -100,8 +100,7 @@ const SceneController: React.FC<{
 
         if (groupRef.current) {
             if (isHandDetected) {
-                const HAND_ROTATION_FACTOR = Math.PI * 1.2; 
-                const targetHandRotation = currentInput.current.x * HAND_ROTATION_FACTOR;
+                const targetHandRotation = currentInput.current.x * Math.PI * 1.2;
                 if (!wasDetected.current) {
                     grabOffset.current = groupRef.current.rotation.y - targetHandRotation;
                     rotationVelocity.current = 0;
@@ -137,11 +136,11 @@ const SceneContent: React.FC<ExperienceProps> = ({ mixFactor, colors, inputRef, 
       <ambientLight intensity={0.4} />
       <spotLight position={[20, 20, 20]} angle={0.4} penumbra={1} intensity={2.0} color="#fff5d0" castShadow />
       
-      <Environment files='public/hdri/potsdamer_platz_1k.hdr' background={false} />
+      {/* 修正：构建后的 HDRI 资源路径指向根目录 */}
+      <Environment files='/hdri/potsdamer_platz_1k.hdr' background={false} />
       <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
       <Snow mixFactor={mixFactor} />
 
-      {/* 记忆挂绳装饰 */}
       <DecorativeRope userImages={userImages || []} />
 
       <group ref={groupRef} position={[0, 0, 0]}>
@@ -164,7 +163,6 @@ const SceneContent: React.FC<ExperienceProps> = ({ mixFactor, colors, inputRef, 
       </group>
 
       <EffectComposer enableNormalPass={true} multisampling={0}>
-        {/* luminanceThreshold 提高至 1.1，防止 1.0 亮度的白色边框产生强光晕，保护签名清晰度 */}
         <Bloom luminanceThreshold={1.1} mipmapBlur intensity={1.2} radius={0.4} />
         <Vignette eskil={false} offset={0.1} darkness={1.1} />
       </EffectComposer>

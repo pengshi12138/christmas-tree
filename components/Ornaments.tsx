@@ -26,52 +26,45 @@ interface OrnamentsProps {
   allSignatures?: string[];
 }
 
-// --- 升级：支持换行与动态缩放的艺术签名生成器 ---
+// --- 增强版艺术签名贴图生成器 ---
 const generateSignatureTexture = (text: string) => {
     const canvas = document.createElement('canvas');
     canvas.width = 1024;
-    canvas.height = 320; // 略微增加高度以容纳双行
+    canvas.height = 320; 
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!text) return new THREE.CanvasTexture(canvas);
 
-    // 1. 动态字号与换行逻辑
+    // 1. 动态缩放算法
     let fontSize = 140; 
-    const maxW = 920;    // 最大可用宽度
-    const chars = text.split('');
+    if (text.length > 4 && text.length <= 6) fontSize = 110;
+    else if (text.length > 6 && text.length <= 12) fontSize = 90;
+    else if (text.length > 12) fontSize = 70;
+
+    // 2. 自动换行逻辑
     let lines: string[] = [];
-    
-    // 简单的智能换行算法
-    if (text.length <= 6) {
-        lines = [text];
-        fontSize = text.length > 4 ? 120 : 140;
-    } else if (text.length <= 12) {
+    if (text.length > 7) {
         const mid = Math.ceil(text.length / 2);
         lines = [text.substring(0, mid), text.substring(mid)];
-        fontSize = 100;
     } else {
-        // 更长的文本，三行或极小字号
-        const segment = Math.ceil(text.length / 2);
-        lines = [text.substring(0, segment), text.substring(segment)];
-        fontSize = 80;
+        lines = [text];
     }
 
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#0a1a3a'; 
+    // 使用深蓝色水墨感
+    ctx.fillStyle = '#1a2a4a'; 
     ctx.font = `italic bold ${fontSize}px 'Zhi Mang Xing', 'Ma Shan Zheng', 'Monsieur La Doulaise', cursive`;
     
-    // 2. 绘制艺术效果
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
-    ctx.shadowBlur = 4;
+    // 阴影增加立体感
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.15)';
+    ctx.shadowBlur = 6;
     ctx.shadowOffsetX = 2;
     ctx.shadowOffsetY = 2;
 
-    // 3. 多行垂直居中渲染
-    const lineHeight = fontSize * 1.1;
-    const totalH = lines.length * lineHeight;
-    const startY = (canvas.height - totalH) / 2 + lineHeight / 2;
+    const lineHeight = fontSize * 1.15;
+    const startY = (canvas.height / 2) - ((lines.length - 1) * lineHeight / 2);
 
     lines.forEach((line, i) => {
         ctx.fillText(line, canvas.width / 2, startY + i * lineHeight);
@@ -79,6 +72,8 @@ const generateSignatureTexture = (text: string) => {
     
     const tex = new THREE.CanvasTexture(canvas);
     tex.anisotropy = 16;
+    tex.generateMipmaps = true;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
     tex.needsUpdate = true;
     return tex;
 }
@@ -97,14 +92,15 @@ const PhotoFrameMesh: React.FC<{
     const vecScale = useMemo(() => new THREE.Vector3(), []);
     const vecWorld = useMemo(() => new THREE.Vector3(), []);
 
-    const [fontLoaded, setFontLoaded] = useState(false);
+    // 字体加载状态锁
+    const [fontsReady, setFontsReady] = useState(false);
     useEffect(() => {
-        document.fonts.ready.then(() => setFontLoaded(true));
+        document.fonts.ready.then(() => setFontsReady(true));
     }, []);
 
     const signatureTex = useMemo(() => {
-        return signature ? generateSignatureTexture(signature) : null;
-    }, [signature, fontLoaded]); 
+        return (signature && fontsReady) ? generateSignatureTexture(signature) : null;
+    }, [signature, fontsReady]); 
 
     const { frameArgs, photoArgs, photoPos, textPos, textArgs } = useMemo(() => {
         const img = texture.image as any;
@@ -114,18 +110,18 @@ const PhotoFrameMesh: React.FC<{
         if (aspect >= 1) { pw = maxSize; ph = maxSize / aspect; }
         else { ph = maxSize; pw = maxSize * aspect; }
 
-        const mSide = 0.08, mTop = 0.08, mBottom = 0.28; // 增加底部边距以容纳换行签名
+        const mSide = 0.08, mTop = 0.08, mBottom = 0.32; 
         const fw = pw + mSide * 2;
         const fh = ph + mTop + mBottom;
         const py = (fh / 2) - mTop - (ph / 2);
-        const ty = -(fh / 2) + (mBottom / 2) + 0.02;
+        const ty = -(fh / 2) + (mBottom / 2) + 0.01;
 
         return {
             frameArgs: [fw, fh, 0.05] as [number, number, number],
             photoArgs: [pw, ph] as [number, number],
             photoPos: [0, py, 0.03] as [number, number, number],
             textPos: [0, ty, 0.031] as [number, number, number],
-            textArgs: [fw * 0.92, mBottom * 0.8] as [number, number]
+            textArgs: [fw * 0.9, mBottom * 0.8] as [number, number]
         };
     }, [texture]);
 
@@ -139,7 +135,7 @@ const PhotoFrameMesh: React.FC<{
         vecScale.lerpVectors(item.chaosScale, item.targetScale, t);
 
         const isSmall = state.viewport.width < 22;
-        const responsiveBase = isSmall ? 0.7 : 1.0;
+        const responsiveBase = isSmall ? 0.75 : 1.0;
         vecScale.multiplyScalar(responsiveBase);
         
         if (t < 0.98) {

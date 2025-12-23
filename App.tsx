@@ -70,6 +70,56 @@ const BackgroundSlideshow: React.FC<{ images: string[] }> = ({ images }) => {
   );
 };
 
+// --- 升级：灵动奢侈品级标题组件 ---
+const CinematicHeader: React.FC = () => {
+    return (
+        <div className="absolute top-[6%] left-0 w-full flex flex-col items-center justify-center pointer-events-none z-10 space-y-[-1.5rem] md:space-y-[-3rem]">
+            {/* 顶层仪式感文字 */}
+            <div className="flex items-center gap-4 opacity-70 mb-2">
+                <div className="h-[1px] w-8 md:w-16 bg-gradient-to-r from-transparent to-[#d4af37]" />
+                <span className="font-luxury text-[10px] md:text-[12px] tracking-[0.6em] text-[#d4af37] uppercase">
+                    The Grand Gift of Memory
+                </span>
+                <div className="h-[1px] w-8 md:w-16 bg-gradient-to-l from-transparent to-[#d4af37]" />
+            </div>
+
+            {/* 主标题容器 */}
+            <div className="relative group">
+                {/* 底层模糊辉光 */}
+                <h1 className="font-script text-7xl md:text-[10rem] text-[#d4af37]/20 blur-xl absolute inset-0 select-none">
+                    Merry Christmas
+                </h1>
+                
+                {/* 灵动主文字 */}
+                <h1 
+                    className="relative font-script text-7xl md:text-[10rem] text-center px-4 leading-none"
+                    style={{
+                        background: 'linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        filter: 'drop-shadow(0px 15px 30px rgba(0,0,0,0.6))'
+                    }}
+                >
+                    <span className="inline-block hover:scale-105 transition-transform duration-700">Merry</span>
+                    <span className="block md:inline md:ml-8 hover:scale-105 transition-transform duration-700 delay-75">Christmas</span>
+                </h1>
+
+                {/* 动态扫光层 */}
+                <h1 className="font-script text-7xl md:text-[10rem] text-center absolute inset-0 text-shimmer select-none pointer-events-none">
+                    Merry Christmas
+                </h1>
+            </div>
+
+            {/* 年份标识 */}
+            <div className="pt-4 md:pt-8 opacity-40">
+                <span className="font-luxury text-[8px] md:text-[10px] tracking-[1em] text-white uppercase italic">
+                    Est. 2025
+                </span>
+            </div>
+        </div>
+    );
+};
+
 const App: React.FC = () => {
   const [targetMix, setTargetMix] = useState(1); 
   const [colors] = useState<TreeColors>({ bottom: '#022b1c', top: '#217a46' });
@@ -167,19 +217,8 @@ const App: React.FC = () => {
           </div>
       )}
 
-      <div className="absolute top-[8%] left-0 w-full flex justify-center pointer-events-none z-10">
-        <h1 
-            className="font-script text-7xl md:text-9xl text-center py-10"
-            style={{
-                background: 'linear-gradient(to bottom, #ffffff 20%, #e0e0e0 50%, #999999 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0px 10px 30px rgba(0,0,0,0.8))'
-            }}
-        >
-            Merry Christmas
-        </h1>
-      </div>
+      {/* 优化后的顶部标题 */}
+      <CinematicHeader />
 
       <div className="absolute inset-0 z-20">
         <Experience 
@@ -198,7 +237,6 @@ const App: React.FC = () => {
       </div>
 
       <div className="absolute top-6 right-6 md:top-10 md:right-10 z-40 flex flex-row md:flex-col items-center gap-4">
-          {/* 全屏按钮 */}
           <button onClick={toggleFullscreen} className={iconButtonClass} title="Toggle Fullscreen">
             {isFullscreen ? (
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor" className="w-5 h-5 md:w-6 md:h-6">
