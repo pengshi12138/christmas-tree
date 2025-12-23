@@ -34,12 +34,11 @@ const GestureController: React.FC<GestureControllerProps> = ({ onGesture, isGuiV
     const loadModel = async () => {
       try {
         setLoadingMessage("Connecting to GPU...");
-        // FIX: Cast tf to any because the 'ready' method might be missing from the specific type definition file in some environments.
         await (tf as any).ready();
         if (isMounted) setLoadingMessage("Loading Local AI Model...");
         
-        // 修正：在构建后的项目中，资源路径应直接指向根目录
-        const LOCAL_MODEL_URL = '/models/handpose/model.json';
+        // 修正：去掉开头的斜杠，使其变为相对路径
+        const LOCAL_MODEL_URL = 'models/handpose/model.json';
 
         const net = await handpose.load({
             modelUrl: LOCAL_MODEL_URL

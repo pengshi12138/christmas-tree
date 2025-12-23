@@ -136,7 +136,8 @@ const SceneContent: React.FC<ExperienceProps> = ({ mixFactor, colors, inputRef, 
       <ambientLight intensity={0.4} />
       <spotLight position={[20, 20, 20]} angle={0.4} penumbra={1} intensity={2.0} color="#fff5d0" castShadow />
       
-      <Environment files='/hdri/potsdamer_platz_1k.hdr' background={false} />
+      {/* 修正：去除路径开头的斜杠，使其变为相对路径 */}
+      <Environment files='hdri/potsdamer_platz_1k.hdr' background={false} />
       <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
       <Snow mixFactor={mixFactor} />
 
