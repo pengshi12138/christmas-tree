@@ -4,6 +4,18 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main, master ] # 监听主分支推送
+    # 忽略以下路径的变更以避免不必要的部署触发
+    paths-ignore:
+      - 'public/fonts/**'
+      - 'scripts/**'
+      - 'public/images/**'
+      - 'public/*.txt'
+      - 'README.md'
+      - 'docs/**'
+      - 'tests/**'
+  workflow_dispatch:
+    # allow manual runs
+    inputs: {}
 
 permissions:
   contents: read
