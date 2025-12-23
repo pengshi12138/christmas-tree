@@ -28,7 +28,7 @@ const CANDY_COLORS = ['#FFFFFF'];
 
 const SceneController: React.FC<{ 
     inputRef: React.MutableRefObject<{ x: number, y: number, isDetected?: boolean }>, 
-    groupRef: React.RefObject<THREE.Group> 
+    groupRef: React.RefObject<THREE.Group | null> 
 }> = ({ inputRef, groupRef }) => {
     const { camera, gl } = useThree();
     const vec = useMemo(() => new THREE.Vector3(), []);
@@ -136,7 +136,6 @@ const SceneContent: React.FC<ExperienceProps> = ({ mixFactor, colors, inputRef, 
       <ambientLight intensity={0.4} />
       <spotLight position={[20, 20, 20]} angle={0.4} penumbra={1} intensity={2.0} color="#fff5d0" castShadow />
       
-      {/* 修正：构建后的 HDRI 资源路径指向根目录 */}
       <Environment files='/hdri/potsdamer_platz_1k.hdr' background={false} />
       <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
       <Snow mixFactor={mixFactor} />
@@ -162,9 +161,9 @@ const SceneContent: React.FC<ExperienceProps> = ({ mixFactor, colors, inputRef, 
         />
       </group>
 
-      <EffectComposer enableNormalPass={true} multisampling={0}>
+      <EffectComposer multisampling={0}>
         <Bloom luminanceThreshold={1.1} mipmapBlur intensity={1.2} radius={0.4} />
-        <Vignette eskil={false} offset={0.1} darkness={1.1} />
+        <Vignette offset={0.1} darkness={1.1} />
       </EffectComposer>
     </>
   );

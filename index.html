@@ -5,7 +5,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Grand Luxury Christmas Tree</title>
-    <!-- 引入 Tailwind CSS 运行库 -->
+    <!-- 网站图标引用：请确保 public/ 目录下存在 favicon.ico -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Monsieur+La+Doulaise&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
@@ -24,26 +25,37 @@
       .font-body { font-family: 'Playfair Display', serif; }
       .font-script { font-family: 'Monsieur La Doulaise', cursive; }
       
-      /* 全局流光动画 */
-      @keyframes lightSweep {
+      /* 奢侈品流光效果 */
+      @keyframes shimmer {
         0% { background-position: -200% 0; }
         100% { background-position: 200% 0; }
       }
       
-      .text-shimmer {
+      .luxury-text-effect {
         background: linear-gradient(
-          90deg, 
-          rgba(212,175,55,0) 0%, 
-          rgba(255,255,255,0.8) 50%, 
-          rgba(212,175,55,0) 100%
+          to right, 
+          #d4af37 0%, 
+          #fdfcfb 25%, 
+          #d4af37 50%, 
+          #fdfcfb 75%, 
+          #d4af37 100%
         );
-        background-size: 200% 100%;
-        animation: lightSweep 4s infinite linear;
+        background-size: 200% auto;
         -webkit-background-clip: text;
         background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 6s linear infinite;
       }
 
-      /* 自定义 Tailwind 配置 */
+      /* 漂浮微动效果 */
+      @keyframes softFloat {
+        0%, 100% { transform: translateY(0) rotate(-1deg); }
+        50% { transform: translateY(-10px) rotate(1deg); }
+      }
+      .animate-soft-float {
+        animation: softFloat 4s ease-in-out infinite;
+      }
+
       @theme {
         --font-luxury: 'Cinzel', serif;
         --font-body: 'Playfair Display', serif;
@@ -62,9 +74,9 @@
     "@react-three/postprocessing": "https://esm.sh/@react-three/postprocessing@^3.0.4",
     "vite": "https://esm.sh/vite@^7.3.0",
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "react-webcam": "https://esm.sh/react-webcam@^7.2.0",
     "@tensorflow/tfjs": "https://esm.sh/@tensorflow/tfjs@^4.22.0",
-    "@tensorflow-models/handpose": "https://esm.sh/@tensorflow-models/handpose@^0.1.0"
+    "@tensorflow-models/handpose": "https://esm.sh/@tensorflow-models/handpose@^0.1.0",
+    "react-webcam": "https://esm.sh/react-webcam@^7.2.0"
   }
 }
 </script>
