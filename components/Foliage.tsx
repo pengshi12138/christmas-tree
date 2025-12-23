@@ -82,11 +82,9 @@ interface FoliageProps {
 }
 
 const Foliage: React.FC<FoliageProps> = ({ mixFactor, colors }) => {
-  // RESTORED: Full particle count for high fidelity on all devices
   const count = 75000; 
   
   const materialRef = useRef<THREE.ShaderMaterial>(null);
-  
   const currentMixRef = useRef(1);
   
   const { target, chaos, randoms } = useMemo(() => generateFoliageData(count, 18, 7.5), [count]);
@@ -117,27 +115,19 @@ const Foliage: React.FC<FoliageProps> = ({ mixFactor, colors }) => {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={count}
-          array={target} 
-          itemSize={3}
+          args={[target, 3]}
         />
         <bufferAttribute
           attach="attributes-aTargetPos"
-          count={count}
-          array={target}
-          itemSize={3}
+          args={[target, 3]}
         />
         <bufferAttribute
           attach="attributes-aChaosPos"
-          count={count}
-          array={chaos}
-          itemSize={3}
+          args={[chaos, 3]}
         />
         <bufferAttribute
           attach="attributes-aRandom"
-          count={count}
-          array={randoms}
-          itemSize={1}
+          args={[randoms, 1]}
         />
       </bufferGeometry>
       <shaderMaterial

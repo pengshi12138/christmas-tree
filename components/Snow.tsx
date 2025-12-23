@@ -55,7 +55,6 @@ const snowFragmentShader = `
 `;
 
 const Snow: React.FC<{ mixFactor: number }> = ({ mixFactor }) => {
-  // RESTORED: Full snow count
   const count = 3000;
 
   const pointsRef = useRef<THREE.Points>(null);
@@ -69,15 +68,14 @@ const Snow: React.FC<{ mixFactor: number }> = ({ mixFactor }) => {
     const vel = new Float32Array(count * 3);
     
     for(let i=0; i<count; i++) {
-        // Random box -25 to 25 (Slightly larger to cover screen edges)
         pos[i*3] = (Math.random() - 0.5) * 50;
-        pos[i*3+1] = (Math.random() - 0.5) * 30; // Y height
-        pos[i*3+2] = (Math.random() - 0.5) * 40; // Z depth
+        pos[i*3+1] = (Math.random() - 0.5) * 30; 
+        pos[i*3+2] = (Math.random() - 0.5) * 40; 
         
         sc[i] = Math.random() * 2 + 1;
         
-        vel[i*3] = Math.random() * 0.5 + 0.2; // Drift freq
-        vel[i*3+1] = Math.random() * 2.0 + 1.0; // Fall speed
+        vel[i*3] = Math.random() * 0.5 + 0.2; 
+        vel[i*3+1] = Math.random() * 2.0 + 1.0; 
         vel[i*3+2] = Math.random() * 0.5 + 0.2;
     }
     return { positions: pos, scales: sc, velocities: vel };
@@ -103,9 +101,9 @@ const Snow: React.FC<{ mixFactor: number }> = ({ mixFactor }) => {
   return (
     <points ref={pointsRef} frustumCulled={false}>
       <bufferGeometry>
-        <bufferAttribute attach="attributes-position" count={count} array={positions} itemSize={3} />
-        <bufferAttribute attach="attributes-aScale" count={count} array={scales} itemSize={1} />
-        <bufferAttribute attach="attributes-aVelocity" count={count} array={velocities} itemSize={3} />
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-aScale" args={[scales, 1]} />
+        <bufferAttribute attach="attributes-aVelocity" args={[velocities, 3]} />
       </bufferGeometry>
       <shaderMaterial 
         ref={materialRef}

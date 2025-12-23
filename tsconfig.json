@@ -16,7 +16,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["node", "@react-three/fiber"]
+    "jsxImportSource": "react",
+    "types": ["node", "three", "@react-three/fiber"]
   },
   "include": ["**/*.ts", "**/*.tsx", "three-jsx.d.ts"],
   "exclude": ["node_modules"]
